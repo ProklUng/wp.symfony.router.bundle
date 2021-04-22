@@ -1,0 +1,183 @@
+##########
+# Роутер
+##########
+parameters:
+  router.cache.path: '%kernel.cache_dir%/routes'
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Symfony\Component\Routing\RequestContext: ~
+
+  # Request приложения.
+  global.request:
+    class: Symfony\Component\HttpFoundation\Request
+    factory: ['@request', 'getRequest']
+
+  request.context:
+    class: Symfony\Component\Routing\RequestContext
+    factory: ['@Symfony\Component\Routing\RequestContext', 'fromRequest']
+    arguments: ['@global.request']
+
+  request_context: '@request.context'
+
+  file_locator:
+    class: Symfony\Component\Config\FileLocator
+
+  routing.resolver:
+    class: Symfony\Component\Config\Loader\LoaderResolver
+
+  routing.loader.yml:
+    class: Symfony\Component\Routing\Loader\YamlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.php:
+    class: Symfony\Component\Routing\Loader\PhpFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.xml:
+    class: Symfony\Component\Routing\Loader\XmlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.glob:
+    class: Symfony\Component\Routing\Loader\GlobFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader.directory:
+    class: Symfony\Component\Routing\Loader\DirectoryLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  routing.loader:
+    class: Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
+    arguments:
+      - '@routing.resolver'
+      - []
+      - []
+
+  router:
+    class: Symfony\Component\Routing\Router
+    arguments:
+      - '@routing.loader'
+      - '%kernel.project_dir%/app/routes.yaml'
+      - debug: '%kernel.debug%'
+        # cache_dir: '%router.cache.path%'
+      - '@request.context'
+
+  router.default: '@router'
+
+  # Нативный матчер
+  router.matcher:
+    class: Symfony\Component\Routing\Matcher\UrlMatcherInterface
+    factory: ['@router', 'getMatcher']
+
+  Symfony\Component\Routing\RouterInterface: '@router'
+  Symfony\Component\Routing\RequestContextAwareInterface: '@router'
+  Symfony\Component\Routing\Generator\UrlGeneratorInterface: '@router'
+  Symfony\Component\Routing\Matcher\UrlMatcherInterface: '@router'
+
+  # Инициализация роутера Symfony.
+  # custom.events.init: если ['custom.events.init'], то инициализация пойдет через трэйт Eventable.
+  # Если -  { name: 'custom.events.init', event: 'template_redirect', method: 'router', priority: 5 }
+  # то вызовется метод с приоритетом.
+  symfony_router:
+    class: Prokl\WpSymfonyRouterBundle\Services\Router\InitRouter
+    arguments:
+      - '@routes.collection'
+      - '@json.error.controller'
+      - '@event_dispatcher'
+      - '@controller_resolver'
+      - '@argument_resolver'
+      - '@global.request'
+      - '@request_stack'
+      - '@router.matcher'
+    tags:
+      - { name: 'custom.events.init', event: 'template_redirect', type: 'add_action', method: 'router', priority: 5 }
+
+  # RoutesCollection нативных роутов Symfony.
+  routes.collection:
+    class: Symfony\Component\Routing\RouteCollection
+    factory: ['@router', 'getRouteCollection']
+
+  symfony.get.routes: '@routes.collection'
+
+  Symfony\Component\HttpKernel\Controller\ControllerResolver: ~
+
+  Prokl\WpSymfonyRouterBundle\Services\Controllers\RedirectingController: ~
+
+  # Стандартный контроллер ошибок.
+  standart.error.controller:
+    class: Prokl\WpSymfonyRouterBundle\Services\Controllers\ErrorController
+
+  Prokl\WpSymfonyRouterBundle\Services\Controllers\ErrorController: '@standart.error.controller'
+
+  # Json контроллер ошибок.
+  json.error.controller:
+    class: Prokl\WpSymfonyRouterBundle\Services\Controllers\ErrorJsonController
+    arguments: ['@serializer']
+
+  Prokl\WpSymfonyRouterBundle\Services\Controllers\ErrorJsonController: '@json.error.controller'
+
+  # Поисковик классов в директориях.
+  class.collector:
+    class: Prokl\WpSymfonyRouterBundle\Services\Annotations\SearchAnnotatedClasses
+    arguments: ['%kernel.project_dir%', '%controller.annotations.path%']
+
+  # Диспетчер запуска контроллеров.
+  dispatcher.controller:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\DispatchController
+    arguments:
+      - '@event_dispatcher'
+      - '@Symfony\Component\HttpKernel\Controller\ControllerResolver'
+      - '@argument_resolver'
+      - '@json.error.controller'
+
+  Prokl\WpSymfonyRouterBundle\Services\Utils\DispatchController: '@dispatcher.controller'
+
+  # Фасад. Сработает только, если активирован бандл Facade-Bundle.
+  Prokl\WpSymfonyRouterBundle\Services\Facades\RunController: ~
+
+  # Диспетчер запуска роутов.
+  dispatcher.route:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\DispatchRoute
+    arguments:
+      - '@event_dispatcher'
+      - '@json.error.controller'
+      - '@Symfony\Component\HttpKernel\Controller\ControllerResolver'
+      - '@argument_resolver'
+      - '@serializer'
+
+  Prokl\WpSymfonyRouterBundle\Services\Utils\DispatchRoute: '@dispatcher.route'
+
+  # Фасад. Сработает только, если активирован бандл Facade-Bundle.
+  Prokl\WpSymfonyRouterBundle\Services\Facades\RunRoute: ~
+
+  # Нативный сервис из Symfony.
+  config_cache_factory:
+    class: Symfony\Component\Config\ResourceCheckerConfigCacheFactory
+
+  # Утилиты для работы с роутами.
+  routing.utils:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\RouteChecker
+    arguments: ['@routes.collection', '@global.request', '@request.context']
+
+  Prokl\WpSymfonyRouterBundle\Services\Utils\RouteChecker: '@routing.utils'
+
+  app.bundle.redirect_manager:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\ClearRouteCacheService
+    arguments:
+      - "@filesystem"
+      - "@router"
+      - '%router.cache.path%'
