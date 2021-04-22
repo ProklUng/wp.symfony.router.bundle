@@ -4,9 +4,9 @@ namespace Prokl\WpSymfonyRouterBundle\Tests\Cases;
 
 use Faker\Factory;
 use Faker\Generator;
-use Fedy\Services\Twig\Extensions\Examples\ExampleSimpleController;
 use Prokl\WpSymfonyRouterBundle\Services\Utils\RouteChecker;
 use PHPUnit\Framework\TestCase;
+use Prokl\WpSymfonyRouterBundle\Tests\Fixture\ExampleSimpleController;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
