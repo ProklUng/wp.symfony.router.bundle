@@ -65,8 +65,6 @@ class RouteChecker
      */
     public function isLiveRoute(string $uri): bool
     {
-        // Удалить служебные роуты.
-        $this->routeCollection->remove(['index', 'remove_trailing_slash', 'not-found']);
         $matcher = new UrlMatcher($this->routeCollection, $this->requestContext);
 
         try {
@@ -90,8 +88,6 @@ class RouteChecker
      */
     public function getRouteInfo(string $uri) : array
     {
-        // Удалить служебные роуты.
-        $this->routeCollection->remove(['index', 'remove_trailing_slash', 'not-found']);
         $matcher = new UrlMatcher($this->routeCollection, $this->requestContext);
 
         try {
@@ -111,8 +107,6 @@ class RouteChecker
      */
     public function getRouteInfoReference(string $uri, array $options = []) : ?ControllerReference
     {
-        // Удалить служебные роуты.
-        $this->routeCollection->remove(['index', 'remove_trailing_slash', 'not-found']);
         $matcher = new UrlMatcher($this->routeCollection, $this->requestContext);
 
         try {
