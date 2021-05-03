@@ -36,6 +36,7 @@ use Symfony\Component\HttpKernel\EventListener\RouterListener;
  * @since 24.02.2021 Роуты бандлов.
  * @since 06.03.2021 Инициация события kernel.terminate.
  * @since 21.03.2021 URL matcher опционально пробрасывается снаружи.
+ * @since 03.05.2021 Обработка исключений события kernel.terminate.
  */
 class InitRouter
 {
@@ -180,7 +181,12 @@ class InitRouter
         try {
             $response = $framework->handle($this->request);
             // Инициирует событие kernel.terminate.
-            $framework->terminate($this->request, $response);
+            try {
+                $framework->terminate($this->request, $response);
+            } catch (Exception $e) {
+                http_response_code($e->getCode());
+                exit($e->getMessage());
+            }
         } catch (Exception $e) {
             return;
         }
