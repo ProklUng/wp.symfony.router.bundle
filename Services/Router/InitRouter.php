@@ -163,6 +163,7 @@ class InitRouter
      * Инициализация роутера.
      *
      * @return void
+     * @throws Exception
      */
     public function router(): void
     {
@@ -178,17 +179,13 @@ class InitRouter
         );
 
         // Handle response
+        $response = $framework->handle($this->request);
+        // Инициирует событие kernel.terminate.
         try {
-            $response = $framework->handle($this->request);
-            // Инициирует событие kernel.terminate.
-            try {
-                $framework->terminate($this->request, $response);
-            } catch (Exception $e) {
-                http_response_code($e->getCode());
-                exit($e->getMessage());
-            }
+            $framework->terminate($this->request, $response);
         } catch (Exception $e) {
-            return;
+            http_response_code($e->getCode());
+            exit($e->getMessage());
         }
 
         // Handle if no route match found
