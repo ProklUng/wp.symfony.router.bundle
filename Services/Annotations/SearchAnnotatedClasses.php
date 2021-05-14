@@ -46,7 +46,7 @@ class SearchAnnotatedClasses
      */
     public function collect() : array
     {
-        if (!$this->paths) {
+        if (count($this->paths) === 0) {
             return [];
         }
 

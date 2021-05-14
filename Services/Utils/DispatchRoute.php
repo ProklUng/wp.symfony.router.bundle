@@ -42,7 +42,7 @@ class DispatchRoute
     private $request;
 
     /**
-     * @var Response $response Response.
+     * @var Response | null $response Response.
      */
     private $response;
 
@@ -57,12 +57,12 @@ class DispatchRoute
     private $controllerResolver;
 
     /**
-     * @var RouteCollection
+     * @var RouteCollection | null $routes
      */
     private $routes;
 
     /**
-     * @var RequestContext
+     * @var RequestContext $requestContext
      */
     private $requestContext;
 
@@ -300,12 +300,12 @@ class DispatchRoute
     private function addSubscribers(array $subscribers = []) : void
     {
         foreach ($subscribers as $subscriber) {
+            /** @psalm-suppress DocblockTypeContradiction */
             if (!is_object($subscriber)) {
                 continue;
             }
-            /**
-             * @var EventSubscriberInterface $subscriber
-             */
+
+            /** @var EventSubscriberInterface $subscriber */
             $this->dispatcher->addSubscriber($subscriber);
         }
     }
