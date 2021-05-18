@@ -1,8 +1,6 @@
 ##########
 # Роутер
 ##########
-parameters:
-  router.cache.path: '%kernel.cache_dir%/routes'
 services:
   # конфигурация по умолчанию в *этом* файле
   _defaults:
@@ -32,7 +30,7 @@ services:
     class: Symfony\Component\Routing\Router
     arguments:
       - '@routing.loader'
-      - '%kernel.project_dir%/app/routes.yaml'
+      - '%kernel.project_dir%/%router.config.file%'
       - debug: '%kernel.debug%'
         # cache_dir: '%router.cache.path%'
       - '@request.context'

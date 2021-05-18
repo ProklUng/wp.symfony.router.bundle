@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('wp_symfony_router');
+        $treeBuilder = new TreeBuilder('symfony_router');
         $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('router_request_context_scheme')->defaultValue('http')->end()
                 ->scalarNode('router_request_context_base_url')->defaultValue('')->end()
                 ->scalarNode('router_cache_path')->defaultValue('%kernel.cache_dir%/routes')->end()
+                ->scalarNode('router_config_file')->defaultValue('app/routes.yaml')->end()
                 ->scalarNode('http_port')->defaultValue(80)->end()
                 ->scalarNode('https_port')->defaultValue(443)->end()
                 ->scalarNode('resource')->defaultValue('%kernel.project_dir%/app/routes.yaml')->end()
