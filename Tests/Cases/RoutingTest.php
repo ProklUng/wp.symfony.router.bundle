@@ -3,10 +3,9 @@
 namespace Prokl\WpSymfonyRouterBundle\Tests\Cases;
 
 use Faker\Factory;
-use Faker\Generator;
 use Prokl\WpSymfonyRouterBundle\Services\Utils\RouteChecker;
-use PHPUnit\Framework\TestCase;
 use Prokl\WpSymfonyRouterBundle\Tests\Fixture\ExampleSimpleController;
+use Prokl\WpSymfonyRouterBundle\Tests\Tools\ContainerAwareBaseTestCase;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -21,7 +20,7 @@ use Symfony\Component\Routing\RouteCollection;
  * @since 01.12.2020
  * @since 24.12.2020 Актуализация.
  */
-class RoutingTest extends TestCase
+class RoutingTest extends ContainerAwareBaseTestCase
 {
     private const TEST_ROUTE = '/api/testing/';
 
@@ -30,28 +29,22 @@ class RoutingTest extends TestCase
      */
     protected $obTestObject;
 
-    private $containerSymfony;
-
     /**
-     * @var Generator | null $faker
+     * @inheritDoc
      */
-    protected $faker;
-
     protected function setUp(): void
     {
-        $this->containerSymfony = container();
-
         parent::setUp();
 
         $this->faker = Factory::create();
 
         $this->obTestObject = new RouteChecker(
             $this->getRouteCollection(),
-            $this->containerSymfony->get('global.request'),
+            $this->container->get('global.request'),
             new RequestContext(
                 '',
                 'GET',
-                $this->containerSymfony->getParameter('local.http.host')
+                $this->container->getParameter('local.http.host')
             )
         );
     }
@@ -232,7 +225,7 @@ class RoutingTest extends TestCase
             ['_controller' => ExampleSimpleController::class, 'id' => $this->faker->numberBetween(100, 200)]
         );
 
-        $route->setHost($this->containerSymfony->getParameter('kernel.http.host'));
+        $route->setHost($this->container->getParameter('kernel.http.host'));
 
         $routeCollection = new RouteCollection();
 
