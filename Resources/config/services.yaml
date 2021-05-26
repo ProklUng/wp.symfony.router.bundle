@@ -94,6 +94,17 @@ services:
     class: Prokl\WpSymfonyRouterBundle\Services\Annotations\SearchAnnotatedClasses
     arguments: ['%kernel.project_dir%', '%controller.annotations.path%']
 
+  # Проверка роутов на существование контроллеров.
+  router.checker.exists:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\RouteCheckerExist
+    arguments: ['@routes.collection']
+
+  # Проверка роутов на существование контроллеров.
+  router.checker.exists.autoload:
+    class: Prokl\WpSymfonyRouterBundle\Services\Utils\RouteCheckerExist
+    factory: ['@router.checker.exists', 'check']
+    tags: ['service.bootstrap']
+
   # Диспетчер запуска контроллеров.
   dispatcher.controller:
     class: Prokl\WpSymfonyRouterBundle\Services\Utils\DispatchController

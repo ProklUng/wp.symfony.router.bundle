@@ -83,6 +83,10 @@ class WpSymfonyRouterExtension extends Extension
     ): void {
         $annotationsConfigEnabled = $container->getParameter('enable_annotations');
 
+        if ($config['router_check_exists_controller'] === false) {
+            $container->removeDefinition('router.checker.exists.autoload');
+        }
+
         if ($config['default_uri'] === null) {
             $host = (string)$container->getParameter('kernel.http.host');
             $schema = (string)$container->getParameter('kernel.schema');
@@ -100,7 +104,8 @@ class WpSymfonyRouterExtension extends Extension
                 'symfony/framework-bundle',
                 '5.2',
                 'Not setting the "framework.router.utf8" configuration option is deprecated, 
-                it will default to "true" in version 6.0.');
+                it will default to "true" in version 6.0.'
+            );
         }
 
         $container->setParameter('router.request.context.host', $config['router_request_context_host']);
