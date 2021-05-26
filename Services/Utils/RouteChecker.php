@@ -41,8 +41,8 @@ class RouteChecker
      * Routing constructor.
      *
      * @param RouteCollection $routeCollection Коллекция роутов.
-     * @param Request         $request
-     * @param RequestContext  $requestContext
+     * @param Request         $request         Request.
+     * @param RequestContext  $requestContext  Request context.
      */
     public function __construct(
         RouteCollection $routeCollection,

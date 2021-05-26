@@ -21,6 +21,9 @@ class ErrorJsonControllerTest extends ContainerAwareBaseTestCase
      */
     protected $obTestObject;
 
+    /**
+     * @inheritDoc
+     */
     protected function setUp(): void
     {
         parent::setUp();
