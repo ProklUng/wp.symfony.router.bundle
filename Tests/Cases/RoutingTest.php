@@ -2,10 +2,10 @@
 
 namespace Prokl\WpSymfonyRouterBundle\Tests\Cases;
 
-use Faker\Factory;
 use Prokl\WpSymfonyRouterBundle\Services\Utils\RouteChecker;
 use Prokl\WpSymfonyRouterBundle\Tests\Fixture\ExampleSimpleController;
 use Prokl\WpSymfonyRouterBundle\Tests\Tools\ContainerAwareBaseTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -36,15 +36,13 @@ class RoutingTest extends ContainerAwareBaseTestCase
     {
         parent::setUp();
 
-        $this->faker = Factory::create();
-
         $this->obTestObject = new RouteChecker(
             $this->getRouteCollection(),
-            $this->container->get('global.request'),
+            new Request(),
             new RequestContext(
                 '',
                 'GET',
-                $this->container->getParameter('local.http.host')
+                'test.loc'
             )
         );
     }
@@ -144,10 +142,10 @@ class RoutingTest extends ContainerAwareBaseTestCase
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $expectedHost = 'http://' . $this->containerSymfony->getParameter('kernel.http.host');
+        $expectedHost = 'test.loc';
 
         $this->assertSame(
-            $expectedHost . '/api/testing/',
+            'http://' . $expectedHost . '/api/testing/',
             $result,
             'Не верный url роута.'
         );
@@ -225,7 +223,7 @@ class RoutingTest extends ContainerAwareBaseTestCase
             ['_controller' => ExampleSimpleController::class, 'id' => $this->faker->numberBetween(100, 200)]
         );
 
-        $route->setHost($this->container->getParameter('kernel.http.host'));
+        $route->setHost('test.loc');
 
         $routeCollection = new RouteCollection();
 
