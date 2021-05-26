@@ -110,7 +110,8 @@ class DispatchController
     ): bool {
         // Задать контроллер
         $this->request->attributes->set(
-            '_controller', $controllerAction
+            '_controller',
+            $controllerAction
         );
 
         $this->request->headers->add($this->headers);
@@ -125,9 +126,8 @@ class DispatchController
         );
 
         try {
-            $this->response = $framework->handle(
-                $this->request
-            );
+            $this->response = $framework->handle($this->request);
+            $framework->terminate($this->request, $this->response);
         } catch (Exception $e) {
             return false;
         }

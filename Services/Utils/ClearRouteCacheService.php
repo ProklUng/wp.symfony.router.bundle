@@ -33,9 +33,9 @@ class ClearRouteCacheService
     /**
      * Constructor
      *
-     * @param Filesystem $fs             Filesystem
-     * @param Router     $router         Router
-     * @param string     $kernelCacheDir Cache dir path
+     * @param Filesystem $fs             Filesystem.
+     * @param Router     $router         Router.
+     * @param string     $kernelCacheDir Cache dir path.
      */
     public function __construct(Filesystem $fs, Router $router, string $kernelCacheDir)
     {

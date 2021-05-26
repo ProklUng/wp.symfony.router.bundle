@@ -190,6 +190,7 @@ class DispatchRoute
 
         try {
             $this->response = $framework->handle($this->request);
+            $framework->terminate($this->request, $this->response);
         } catch (Exception $e) {
             return false;
         }
