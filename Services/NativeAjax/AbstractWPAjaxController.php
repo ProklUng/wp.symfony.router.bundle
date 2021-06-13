@@ -19,7 +19,7 @@ class AbstractWPAjaxController extends AbstractController
     /**
      * AbstractWPAjaxController constructor.
      *
-     * @param Request|null $request
+     * @param Request|null $request Request.
      */
     public function __construct(?Request $request = null)
     {
