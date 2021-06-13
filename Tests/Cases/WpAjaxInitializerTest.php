@@ -2,6 +2,7 @@
 
 namespace Prokl\WpSymfonyRouterBundle\Tests\Cases;
 
+use LogicException;
 use Prokl\TestingTools\Tools\Container\BuildContainer;
 use Prokl\WordpressCi\Base\WordpressableTestCase;
 use Prokl\WpSymfonyRouterBundle\Services\NativeAjax\WpAjaxInitializer;
@@ -131,8 +132,36 @@ class WpAjaxInitializerTest extends WordpressableTestCase
     }
 
     /**
-     * @param boolean $public
-     * @param string  $handler
+     * getRouteData().
+     *
+     * @return void
+     */
+    public function testGetRouteData() : void
+    {
+        $this->obTestObject = new WpAjaxInitializer($this->routeCollection, $this->container);
+
+        $result = $this->obTestObject->getRouteData($this->action);
+        $defaults = $result->getDefault('_public');
+
+        $this->assertTrue($defaults, 'Defaults не пробросились.');
+    }
+
+    /**
+     * getRouteData(). Invalid action.
+     *
+     * @return void
+     */
+    public function testGetRouteDataInvalidAction() : void
+    {
+        $this->obTestObject = new WpAjaxInitializer($this->routeCollection, $this->container);
+
+        $this->expectException(LogicException::class);
+        $this->obTestObject->getRouteData('fake-action');
+    }
+
+    /**
+     * @param boolean $public  Признак public.
+     * @param string  $handler Обработчик.
      *
      * @return Route
      */

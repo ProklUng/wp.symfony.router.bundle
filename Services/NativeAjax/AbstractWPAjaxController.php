@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AbstractWPAjaxController extends AbstractController
 {
     /**
-     * @var Request $request
+     * @var Request $request Request.
      */
     protected $request;
 

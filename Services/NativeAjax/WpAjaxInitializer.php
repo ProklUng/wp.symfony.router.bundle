@@ -2,10 +2,12 @@
 
 namespace Prokl\WpSymfonyRouterBundle\Services\NativeAjax;
 
+use LogicException;
 use ReflectionException;
 use ReflectionMethod;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -17,9 +19,14 @@ use Symfony\Component\Routing\RouteCollection;
 class WpAjaxInitializer
 {
     /**
-     * @var RouteCollection $routes Роуты.
+     * @var RouteCollection $routeCollection Роуты.
      */
-    private $routes;
+    private $routeCollection;
+
+    /**
+     * @var Route[] $routes Данные на роуты.
+     */
+    private static $routes;
 
     /**
      * @var ContainerInterface $container Контейнер.
@@ -34,10 +41,45 @@ class WpAjaxInitializer
      */
     public function __construct(RouteCollection $routes, ContainerInterface $container)
     {
-        $this->routes = $routes;
+        $this->routeCollection = $routes;
+        static::$routes = $this->routeCollection->all();
         $this->container = $container;
 
         $this->init();
+    }
+
+    /**
+     * Данные на роут.
+     *
+     * @param string $action Action.
+     *
+     * @return Route
+     * @throws LogicException Когда роут не найден.
+     */
+    public function getRouteData(string $action) : Route
+    {
+        if (array_key_exists($action, static::$routes)) {
+            return static::$routes[$action];
+        }
+
+        throw new LogicException('Route ' . $action . ' not found.');
+    }
+
+    /**
+     * Данные на роут. Статический фасад.
+     *
+     * @param string $action Action.
+     *
+     * @return Route
+     * @throws LogicException Когда роут не найден.
+     */
+    public static function route(string $action) : Route
+    {
+        if (array_key_exists($action, static::$routes)) {
+            return static::$routes[$action];
+        }
+
+        throw new LogicException('Route ' . $action . ' not found.');
     }
 
     /**
@@ -47,11 +89,10 @@ class WpAjaxInitializer
      */
     private function init() : void
     {
-        $routes = $this->routes->all();
-        foreach ($routes as $action => $route) {
+        foreach (static::$routes as $action => $route) {
             $defaults = $route->getDefaults();
-            // Публичный роут или нет
-            $public = $defaults['_public'];
+            // Публичный роут или нет.
+            $public = $defaults['_public'] ?? false;
 
             $controller = $this->parseController($defaults['_controller']);
 
@@ -105,8 +146,6 @@ class WpAjaxInitializer
             return [$controller];
         }
 
-        throw new RuntimeException(
-          'Error parsing controller'
-        );
+        throw new RuntimeException('Error parsing controller');
     }
 }
