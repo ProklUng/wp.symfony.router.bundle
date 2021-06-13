@@ -31,7 +31,7 @@ examples_wp: # Action роута
   methods: [GET, POST]
   controller: 'Local\Services\Wordpress\SampleAjaxController::action'
   defaults:
-    _public: true
+    _public: true # Публичный роут или только для админки?
 ```
 
 Если не задана, то пытается найти по адресу `/app/wp_routes.yaml`.
