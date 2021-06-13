@@ -1,0 +1,7 @@
+examples_wp: # Action роута
+  path: ''   # Игнор
+  methods: [GET, POST]
+  controller: 'Prokl\WpSymfonyRouterBundle\Tests\Fixture\Controller\SampleAjaxController::action'
+  defaults:
+    _public: true
+

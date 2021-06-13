@@ -11,3 +11,36 @@ services:
 
   Prokl\WpSymfonyRouterBundle\Tests\Fixture\FixtureAjaxController: ~
   Prokl\WpSymfonyRouterBundle\Tests\Fixture\FixtureAjaxControllerInvoke: ~
+
+  routing.resolver:
+    class: Symfony\Component\Config\Loader\LoaderResolver
+    arguments:
+      - ['@routing.loader.yml']
+
+  file_locator:
+    class: Symfony\Component\Config\FileLocator
+
+  routing.loader.yml:
+    class: Symfony\Component\Routing\Loader\YamlFileLoader
+    arguments: ['@file_locator']
+    tags:
+      - { name: routing.loader }
+
+  wp_ajax.loader:
+    public: true
+    class: Symfony\Component\Routing\RouteCollection
+    factory: ['@routing.loader', 'load']
+    arguments: ['%kernel.project_dir%/../../../Tests/Fixture/wp_routes.yaml']
+
+  wp_ajax.initializer:
+    class: Prokl\WpSymfonyRouterBundle\Services\NativeAjax\WpAjaxInitializer
+    arguments: ['@wp_ajax.loader', '@service_container']
+
+  routing.loader:
+    class: Symfony\Bundle\FrameworkBundle\Routing\DelegatingLoader
+    arguments:
+      - '@routing.resolver'
+      - []
+      - []
+
+  Prokl\WpSymfonyRouterBundle\Tests\Fixture\Controller\SampleAjaxController: ~
