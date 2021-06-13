@@ -128,7 +128,7 @@ class WpSymfonyRouterExtension extends Extension
         $container->setParameter('router.resource', $config['resource']);
         $container->setParameter('yaml.native.routes.file', $config['native_resource']);
 
-        if (!file_exists($config['resource'])) {
+        if (!file_exists($config['native_resource'])) {
             $container->removeDefinition('wp_ajax.loader');
             $container->removeDefinition('wp_ajax.initializer');
         }
