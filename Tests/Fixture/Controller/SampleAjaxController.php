@@ -3,6 +3,7 @@
 namespace Prokl\WpSymfonyRouterBundle\Tests\Fixture\Controller;
 
 use Prokl\WpSymfonyRouterBundle\Services\NativeAjax\AbstractWPAjaxController;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class SampleAjaxController
@@ -10,9 +11,21 @@ use Prokl\WpSymfonyRouterBundle\Services\NativeAjax\AbstractWPAjaxController;
  */
 class SampleAjaxController extends AbstractWPAjaxController
 {
-    public function action()
+    /**
+     * @return void
+     */
+    public function action() : void
     {
-        echo 'OK';
+        $this->checkTypeRequest('Invalid type request');
+
+        $response = new Response(
+            'OK',
+            Response::HTTP_OK
+        );
+
+        $response->headers->set('Content-Type', 'application/html; charset=utf-8');
+        $response->send();
+
         wp_die();
     }
 }

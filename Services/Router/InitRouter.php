@@ -141,7 +141,8 @@ class InitRouter
 
         $this->dispatcher = $eventDispatcher;
         $this->routeListener = new RouterListener(
-            $matcher, $this->requestStack
+            $matcher,
+            $this->requestStack
         );
 
         $this->errorListener = new ErrorListener(

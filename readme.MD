@@ -40,3 +40,29 @@ examples_wp: # Action роута
 Он представляет собой наследника от `AbstractController` с добавлением конструктора, принимающего одну зависимость - 
 объект класса `Request`. Приходится так действовать, потому что в ajax обработчик Wordpress никак нелльзя передать
 параметры снаружи (за исключением супер-глобалов типа `$_POST` и `$_GET`). 
+
+Дополнительно в Request контроллера пробрасываются всякие параметры из свойств роута. Например `methods`.
+
+Это делает возможным, например, отсекать неправильные типа запроса в `action` обработчика.
+
+```php
+class SampleAjaxController extends AbstractWPAjaxController
+{
+    public function action()
+    {
+        $this->checkTypeRequest('Invalid type request');
+
+        $response = new Response(
+            'OK',
+            Response::HTTP_OK
+        );
+
+        $response->headers->set('Content-Type', 'application/html; charset=utf-8');
+        $response->send();
+        
+        wp_die();
+    }
+}
+```
+
+Или писать каку-нибудь логику для операций с `defaults`, `requirements` или `options` из параметров роута.

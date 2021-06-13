@@ -17,7 +17,7 @@ class SampleAjaxControllerTest extends WordpressableAjaxTestCase
     protected function setUp() : void
     {
         parent::setup();
-        wp_set_current_user( 1 );
+        wp_set_current_user(1);
 
         $this->container = static::$testContainer = BuildContainer::getTestContainer(
             [
@@ -26,7 +26,19 @@ class SampleAjaxControllerTest extends WordpressableAjaxTestCase
             '/../../../../Tests/Fixture'
         );
 
+        $_GET['action'] = 'examples_wp';
+
         $this->container->get('wp_ajax.initializer');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        $_GET['action'] = null;
     }
 
     /**
