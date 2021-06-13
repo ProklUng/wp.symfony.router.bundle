@@ -20,10 +20,12 @@
 - `router_cache_path` - путь к кэшу аннотаций. По умолчанию `%kernel.cache_dir%/routes`. 
 - `router_config_file` - путь к файлу с конфигурацией роутов. По умолчанию  `app/routes.yaml`. Файл может быть в любом поддерживаемом Symfony формате - Yaml, PHP, XML и т.д. 
 - `router_check_exists_controller` - проверять на существование классы-контроллеры. По умолчанию `false`.
+- `resource` - путь к конфигурационному файлу роутов. По умолчанию: `%kernel.project_dir%/app/routes.yaml`.
+- `native_resource` - путь к конфигурации "нативных" обработчиков роутов. По умолчанию: `%kernel.project_dir%/app/wp_routes.yaml`.
 
 ## "Нативные" Wordpress обработчики AJAX (через wp-admin.php)
 
-Переменная в контейнере `yaml.native.routes.file` - путь к Yaml файлу типа:
+Yaml файл типа (обычный файл с описаниями роутов):
 
 ```yaml
 examples_wp: # Action роута
@@ -33,8 +35,6 @@ examples_wp: # Action роута
   defaults:
     _public: true # Публичный роут или только для админки?
 ```
-
-Если переменная не задана, то пытается найти по адресу `/app/wp_routes.yaml`.
 
 Для реализации контроллера на нативный обработчик Ajax предлагается использовать класс `Prokl\WpSymfonyRouterBundle\Services\NativeAjax\AbstractWPAjaxController`.
 Он представляет собой наследника от `AbstractController` с добавлением конструктора, принимающего одну зависимость - 

@@ -38,6 +38,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('http_port')->defaultValue(80)->end()
                 ->scalarNode('https_port')->defaultValue(443)->end()
                 ->scalarNode('resource')->defaultValue('%kernel.project_dir%/app/routes.yaml')->end()
+                ->scalarNode('native_resource')->defaultValue('%kernel.project_dir%/app/wp_routes.yaml')->end()
                 ->booleanNode('utf8')->defaultValue(true)->end()
             ->end();
 
