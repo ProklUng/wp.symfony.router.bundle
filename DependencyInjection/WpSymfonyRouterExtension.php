@@ -38,6 +38,7 @@ class WpSymfonyRouterExtension extends Extension
         );
 
         $loader->load('services.yaml');
+        $loader->load('native.yaml');
 
         // Если не задействован FacadeBundle, то удалить фасады.
         if (!class_exists(AbstractFacade::class)) {
@@ -51,6 +52,8 @@ class WpSymfonyRouterExtension extends Extension
         if (!$container->hasParameter('controller.annotations.path')) {
             $container->setParameter('controller.annotations.path', []);
         }
+
+        $this->processNativeWpRoutes($container);
 
         $this->registerRouterConfiguration(
             $config,
@@ -158,6 +161,33 @@ class WpSymfonyRouterExtension extends Extension
                     new Reference('file_locator'),
                     new Reference('routing.loader.annotation'),
                 ]);
+        }
+    }
+
+    /**
+     * Обработка "нативных" роутов (wp-admin/admin_ajax.php).
+     *
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     *
+     * @since 13.06.2021
+     */
+    private function processNativeWpRoutes(ContainerBuilder $container): void
+    {
+        // Путь к "нативным" роутам WP.
+        if (!$container->hasParameter('yaml.native.routes.file')) {
+            $container->setParameter('yaml.native.routes.file', '/app/wp_routes.yaml');
+        }
+
+        $nativeRoutesPath = $container->getParameter('yaml.native.routes.file');
+        $root = $container->getParameter('kernel.project_dir');
+
+        // Если файл с роутами не существует, то выпилить из контейнера
+        // соответствующие сервисы.
+        if (!file_exists($root . $nativeRoutesPath)) {
+            $container->removeDefinition('wp_ajax.loader');
+            $container->removeDefinition('wp_ajax.initializer');
         }
     }
 }

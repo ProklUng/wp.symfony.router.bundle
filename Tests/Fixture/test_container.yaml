@@ -1,0 +1,13 @@
+#####################
+# Тестовый контейнер
+#####################
+
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Prokl\WpSymfonyRouterBundle\Tests\Fixture\FixtureAjaxController: ~
+  Prokl\WpSymfonyRouterBundle\Tests\Fixture\FixtureAjaxControllerInvoke: ~

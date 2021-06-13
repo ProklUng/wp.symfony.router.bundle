@@ -1,0 +1,21 @@
+##########
+# Роутер
+##########
+
+services:
+  # конфигурация по умолчанию в *этом* файле
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  wp_ajax.loader:
+    public: false
+    class: Symfony\Component\Routing\RouteCollection
+    factory: ['@routing.loader', 'load']
+    arguments: ['%kernel.project_dir%/%yaml.native.routes.file%']
+
+  wp_ajax.initializer:
+    class: Prokl\WpSymfonyRouterBundle\Services\NativeAjax\WpAjaxInitializer
+    arguments: ['@wp_ajax.loader', '@service_container']
+    tags: ['service.bootstrap']
