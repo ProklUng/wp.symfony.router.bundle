@@ -13,7 +13,7 @@ services:
     public: false
     class: Symfony\Component\Routing\RouteCollection
     factory: ['@routing.loader', 'load']
-    arguments: ['%kernel.project_dir%/%yaml.native.routes.file%']
+    arguments: ['%yaml.native.routes.file%']
 
   wp_ajax.initializer:
     class: Prokl\WpSymfonyRouterBundle\Services\NativeAjax\WpAjaxInitializer

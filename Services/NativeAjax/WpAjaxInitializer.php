@@ -63,7 +63,9 @@ class WpAjaxInitializer
     }
 
     /**
-     * @param array|string|object $controller
+     * Распарсить контроллер.
+     *
+     * @param array|string|object $controller Данные из конфигурационного файла.
      *
      * @return array|false|object|string|string[]|null
      * @throws RuntimeException Когда не получилось распарсить контроллер.
