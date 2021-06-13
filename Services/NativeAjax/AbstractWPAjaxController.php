@@ -24,17 +24,20 @@ class AbstractWPAjaxController extends AbstractController
      */
     public function __construct(?Request $request = null)
     {
+        $this->request = $request;
         if ($request === null) {
             $this->request = Request::createFromGlobals();
         }
 
-        $action = (string)$this->request->query->get('action');
-        $routeData = WpAjaxInitializer::route($action);
+        $action = $this->request->query->get('action');
+        if ($action) {
+            $routeData = WpAjaxInitializer::route($action);
 
-        $this->request->attributes->set('methods', $routeData->getMethods());
-        $this->request->attributes->set('requirements', $routeData->getRequirements());
-        $this->request->attributes->set('defaults', $routeData->getDefaults());
-        $this->request->attributes->set('options', $routeData->getOptions());
+            $this->request->attributes->set('methods', $routeData->getMethods());
+            $this->request->attributes->set('requirements', $routeData->getRequirements());
+            $this->request->attributes->set('defaults', $routeData->getDefaults());
+            $this->request->attributes->set('options', $routeData->getOptions());
+        }
     }
 
     /**
