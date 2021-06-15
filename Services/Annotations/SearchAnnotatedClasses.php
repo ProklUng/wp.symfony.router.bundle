@@ -28,7 +28,7 @@ class SearchAnnotatedClasses
     /**
      * SearchAnnotatedClasses constructor.
      *
-     * @param string $documentRoot DOCUMENT_ROOT
+     * @param string $documentRoot DOCUMENT_ROOT.
      * @param array  $paths        Пути, где искать классы.
      */
     public function __construct(

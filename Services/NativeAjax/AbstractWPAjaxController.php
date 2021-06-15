@@ -56,7 +56,7 @@ class AbstractWPAjaxController extends AbstractController
         }
 
         $requestMethod = $this->request->getMethod();
-        if (!in_array($requestMethod, $methods, false)) {
+        if (!in_array($requestMethod, $methods, true)) {
             $response = new Response(
                 $message,
                 $statusCode
