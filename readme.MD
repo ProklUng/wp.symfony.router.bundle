@@ -67,3 +67,28 @@ class SampleAjaxController extends AbstractWPAjaxController
 ```
 
 Или писать каку-нибудь логику для операций с `defaults`, `requirements` или `options` из параметров роута.
+
+## Использование роутера без контейнера и вне фреймворка
+
+`functions.php`:
+
+```php
+use Prokl\WpSymfonyRouterBundle\Services\Agnostic\RoutesLoader;
+use Prokl\WpSymfonyRouterBundle\Services\Agnostic\Router;
+use Prokl\WpSymfonyRouterBundle\Services\Agnostic\WpInitializerRouter;
+
+$agnosticRouter = new RoutesLoader(
+    $_SERVER['DOCUMENT_ROOT'] . '/local/configs/standalone_routes.yaml',
+    $_SERVER['DOCUMENT_ROOT'] . '/wp-content/cache/routes', // Кэш; если null - без кэширования.
+    $_ENV['APP_DEBUG'] // Режим отладки или нет
+);
+
+$agnosticRouterInstance = new Router(
+    $agnosticRouter->getRouter(),
+    new WpInitializerRouter()
+);
+```
+
+Все. Подтянутся роуты из `/local/configs/standalone_routes.yaml`. Автоматически подцепятся события.
+
+Допускается наличие нескольких таких "агностических" роутеров в один момент.
