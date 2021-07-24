@@ -167,5 +167,14 @@ class WpSymfonyRouterExtension extends Extension
                     new Reference('routing.loader.annotation'),
                 ]);
         }
+
+        // Применить кэширование роутов, если это задано опцией.
+        if ($config['router_cache_path']) {
+            $routerDefinition = $container->getDefinition('router');
+            $routerDefinition->addMethodCall(
+                'setConfigCacheFactory',
+                [new Reference('config_cache_factory')]
+            );
+        }
     }
 }

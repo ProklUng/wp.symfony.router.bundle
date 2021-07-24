@@ -32,7 +32,11 @@ services:
       - '@routing.loader'
       - '%kernel.project_dir%/%router.config.file%'
       - debug: '%kernel.debug%'
-        # cache_dir: '%router.cache.path%'
+        cache_dir: '%router.cache.path%'
+        generator_class: Symfony\Component\Routing\Generator\CompiledUrlGenerator
+        generator_dumper_class: Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper
+        matcher_class: Symfony\Bundle\FrameworkBundle\Routing\RedirectableCompiledUrlMatcher
+        matcher_dumper_class: Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper
       - '@request.context'
 
   router.default: '@router'
@@ -54,7 +58,7 @@ services:
   symfony_router:
     class: Prokl\WpSymfonyRouterBundle\Services\Router\InitRouter
     arguments:
-      - '@routes.collection'
+      - '@router'
       - '@json.error.controller'
       - '@event_dispatcher'
       - '@controller_resolver'
@@ -71,6 +75,22 @@ services:
     factory: ['@router', 'getRouteCollection']
 
   symfony.get.routes: '@routes.collection'
+
+  config.resource.self_checking_resource_checker:
+    class: Symfony\Component\Config\Resource\SelfCheckingResourceChecker
+    tags:
+      - { name: config_cache.resource_checker, priority: -990 }
+
+  dependency_injection.config.container_parameters_resource_checker:
+    class: Symfony\Component\DependencyInjection\Config\ContainerParametersResourceChecker
+    arguments: ['@service_container']
+    tags:
+      - { name: config_cache.resource_checker, priority: -980 }
+
+  config_cache_factory:
+    class: Symfony\Component\Config\ResourceCheckerConfigCacheFactory
+    arguments:
+      - !tagged_iterator config_cache.resource_checker
 
   Symfony\Component\HttpKernel\Controller\ControllerResolver: ~
 
@@ -133,10 +153,6 @@ services:
 
   # Фасад. Сработает только, если активирован бандл Facade-Bundle.
   Prokl\WpSymfonyRouterBundle\Services\Facades\RunRoute: ~
-
-  # Нативный сервис из Symfony.
-  config_cache_factory:
-    class: Symfony\Component\Config\ResourceCheckerConfigCacheFactory
 
   # Утилиты для работы с роутами.
   routing.utils:

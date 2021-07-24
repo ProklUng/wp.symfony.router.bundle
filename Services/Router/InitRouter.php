@@ -10,8 +10,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\HttpKernel;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,6 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\EventListener\ErrorListener;
 use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class InitRouter
@@ -37,6 +36,7 @@ use Symfony\Component\HttpKernel\EventListener\RouterListener;
  * @since 06.03.2021 Инициация события kernel.terminate.
  * @since 21.03.2021 URL matcher опционально пробрасывается снаружи.
  * @since 03.05.2021 Обработка исключений события kernel.terminate.
+ * @since 24.07.2021 Поддержка кэширования роутов.
  */
 class InitRouter
 {
@@ -44,6 +44,11 @@ class InitRouter
      * @var array $bundlesRoutes Роуты бандлов.
      */
     private static $bundlesRoutes = [];
+
+    /**
+     * @var RouterInterface $router Router.
+     */
+    private $router;
 
     /**
      * @var RouteCollection $routeCollection Коллекция роутов.
@@ -97,29 +102,29 @@ class InitRouter
      * @since 19.11.2020 RequestStack пробрасывается снаружи.
      * @since 21.03.2021 URL matcher опционально пробрасывается снаружи.
      *
-     * @param RouteCollection             $routeCollection    Коллекция роутов.
+     * @param RouterInterface             $router             Роутер.
      * @param ErrorControllerInterface    $errorController    Error controller.
      * @param EventDispatcherInterface    $eventDispatcher    Event dispatcher.
      * @param ControllerResolverInterface $controllerResolver Controller resolver.
      * @param ArgumentResolverInterface   $argumentResolver   Argument resolver.
      * @param Request                     $request            Request приложения.
      * @param RequestStack                $requestStack       Request stack.
-     * @param UrlMatcherInterface|null    $urlMatcher         URL matcher.
      */
     public function __construct(
-        RouteCollection $routeCollection,
+        RouterInterface $router,
         ErrorControllerInterface $errorController,
         EventDispatcherInterface $eventDispatcher,
         ControllerResolverInterface $controllerResolver,
         ArgumentResolverInterface $argumentResolver,
         Request $request,
-        RequestStack $requestStack,
-        UrlMatcherInterface $urlMatcher = null
+        RequestStack $requestStack
     ) {
         $this->request = $request;
         $this->resolver = $controllerResolver;
         $this->argumentResolver = $argumentResolver;
-        $this->routeCollection = $routeCollection;
+
+        $this->router = $router;
+        $this->routeCollection = $router->getRouteCollection();
 
         $this->requestStack = $requestStack;
         $this->requestStack->push($request);
@@ -132,11 +137,7 @@ class InitRouter
         $this->mixRoutesBundles();
 
         // Инициализация необходимого для запуска роутера.
-        $matcher = $urlMatcher ?? new UrlMatcher(
-            $this->routeCollection,
-            $requestContext
-        );
-
+        $matcher = $this->router->getMatcher();
         $matcher->setContext($requestContext);
 
         $this->dispatcher = $eventDispatcher;
