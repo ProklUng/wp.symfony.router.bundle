@@ -296,12 +296,13 @@ class DispatchRoute
     /**
      * Кучно добавить слушателей событий.
      *
-     * @param array $subscribers
+     * @param array $subscribers Подписчики.
+     *
+     * @return void
      */
     private function addSubscribers(array $subscribers = []) : void
     {
         foreach ($subscribers as $subscriber) {
-            /** @psalm-suppress DocblockTypeContradiction */
             if (!is_object($subscriber)) {
                 continue;
             }

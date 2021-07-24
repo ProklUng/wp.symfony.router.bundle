@@ -136,7 +136,7 @@ class InitRouter
         // Роуты бандлов.
         $this->mixRoutesBundles();
 
-        // Инициализация необходимого для запуска роутера.
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $matcher = $this->router->getMatcher();
         $matcher->setContext($requestContext);
 
@@ -186,7 +186,7 @@ class InitRouter
         try {
             $framework->terminate($this->request, $response);
         } catch (Exception $e) {
-            http_response_code($e->getCode());
+            http_response_code((int)$e->getCode());
             exit($e->getMessage());
         }
 

@@ -28,12 +28,12 @@ class SearchAnnotatedClasses
     /**
      * SearchAnnotatedClasses constructor.
      *
-     * @param string $documentRoot DOCUMENT_ROOT.
-     * @param array  $paths        Пути, где искать классы.
+     * @param string     $documentRoot DOCUMENT_ROOT.
+     * @param array|null $paths        Пути, где искать классы.
      */
     public function __construct(
         string $documentRoot,
-        array $paths = []
+        ?array $paths = []
     ) {
         $this->paths = $paths;
         $this->documentRoot = $documentRoot;
@@ -46,7 +46,7 @@ class SearchAnnotatedClasses
      */
     public function collect() : array
     {
-        if (count($this->paths) === 0) {
+        if ($this->paths === null || count($this->paths) === 0) {
             return [];
         }
 
