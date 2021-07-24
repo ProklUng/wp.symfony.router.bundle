@@ -1,0 +1,10 @@
+first_agnostic_route:
+  path: /foo/{param}/
+  controller: 'Prokl\WpSymfonyRouterBundle\Tests\Fixture::cacheAction'
+  methods: GET|POST
+  requirements:
+    param: '\d+'
+  defaults:
+    param: 'Russia'
+
+
