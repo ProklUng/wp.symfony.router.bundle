@@ -73,11 +73,11 @@ class SampleAjaxController extends AbstractWPAjaxController
 `functions.php`:
 
 ```php
-use Prokl\WpSymfonyRouterBundle\Services\Agnostic\RoutesLoader;
+use Prokl\WpSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator;
 use Prokl\WpSymfonyRouterBundle\Services\Agnostic\Router;
 use Prokl\WpSymfonyRouterBundle\Services\Agnostic\WpInitializerRouter;
 
-$agnosticRouter = new RoutesLoader(
+$agnosticRouter = new RoutesConfigurator(
     $_SERVER['DOCUMENT_ROOT'] . '/local/configs/standalone_routes.yaml',
     $_SERVER['DOCUMENT_ROOT'] . '/wp-content/cache/routes', // Кэш; если null - без кэширования.
     $_ENV['APP_DEBUG'] // Режим отладки или нет
@@ -92,3 +92,11 @@ $agnosticRouterInstance = new Router(
 Все. Подтянутся роуты из `/local/configs/standalone_routes.yaml`. Автоматически подцепятся события.
 
 Допускается наличие нескольких таких "агностических" роутеров в один момент.
+
+## Прочее
+
+1) Экземпляр `Symfony\Component\Routing\Router` можно получить снаружи так:
+
+```php
+$router = \Prokl\WpSymfonyRouterBundle\Services\Agnostic\RoutesConfigurator::getInstance();
+```
