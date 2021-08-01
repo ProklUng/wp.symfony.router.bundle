@@ -30,7 +30,11 @@ class AbstractWPAjaxController extends AbstractController
         }
 
         $action = $this->request->query->get('action');
-        if ($action) {
+        $uri = $this->request->server->get('SCRIPT_NAME', '');
+
+        // Игонорировать /wp-admin/admin.php. Иначе вызывает ложные срабатывания
+        // И ошибки.
+        if ($action && strpos($uri, '/wp-admin/admin.php') === false) {
             $routeData = WpAjaxInitializer::route($action);
 
             $this->request->attributes->set('methods', $routeData->getMethods());
