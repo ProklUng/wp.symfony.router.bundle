@@ -196,11 +196,6 @@ class InitRouter
             return;
         }
 
-        // Bugfix. Статические страницы почему-то грузятся по два раза.
-        if ((bool)$response->headers->get('static-page')) {
-            die();
-        }
-
         // Send the response to the browser and exit app.
         $response->send();
 
