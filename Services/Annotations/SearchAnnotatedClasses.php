@@ -17,26 +17,25 @@ use RegexIterator;
  */
 class SearchAnnotatedClasses
 {
-    /** @var array|null $paths Пути, где искать классы. */
+    /**
+     * @var array|null $paths Пути, где искать классы. Указываются с DOCUMENT_ROOT.
+     */
     private $paths;
 
-    /** @var array $classes Результат. Классы. */
+    /**
+     * @var array $classes Результат. Классы.
+     */
     private $classes = [];
-    /** @var string $documentRoot DOCUMENT_ROOT */
-    private $documentRoot;
 
     /**
      * SearchAnnotatedClasses constructor.
      *
-     * @param string     $documentRoot DOCUMENT_ROOT.
      * @param array|null $paths        Пути, где искать классы.
      */
     public function __construct(
-        string $documentRoot,
         ?array $paths = []
     ) {
         $this->paths = $paths;
-        $this->documentRoot = $documentRoot;
     }
 
     /**
@@ -52,10 +51,10 @@ class SearchAnnotatedClasses
 
         $result = [];
         foreach ($this->paths as $path) {
-            $result[] = $this->listClassesByPath($this->documentRoot . $path);
+            $result[] = $this->listClassesByPath($path);
         }
 
-        $result = collect($result)->flatten()->toArray();
+        $result = (array)$result[0];
 
         $this->classes = array_merge($this->classes, $result);
 

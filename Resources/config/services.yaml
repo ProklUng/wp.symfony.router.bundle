@@ -112,7 +112,7 @@ services:
   # Поисковик классов в директориях.
   class.collector:
     class: Prokl\WpSymfonyRouterBundle\Services\Annotations\SearchAnnotatedClasses
-    arguments: ['%kernel.project_dir%', '%controller.annotations.path%']
+    arguments: ['%controller.annotations.path%']
 
   # Проверка роутов на существование контроллеров.
   router.checker.exists:
