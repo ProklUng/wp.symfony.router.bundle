@@ -3,6 +3,8 @@
 namespace Prokl\WpSymfonyRouterBundle\Services\Router;
 
 use Exception;
+use Prokl\WpSymfonyRouterBundle\Event\AfterHandleRequestEvent;
+use Prokl\WpSymfonyRouterBundle\Event\KernelCustomEvents;
 use Prokl\WpSymfonyRouterBundle\Services\Interfaces\ErrorControllerInterface;
 use Prokl\WpSymfonyRouterBundle\Services\Listeners\StringResponseListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -182,6 +184,13 @@ class InitRouter
 
         // Handle response
         $response = $framework->handle($this->request);
+
+        // Кастомное событие kernel.after_handle_request
+        $this->dispatcher->dispatch(
+            new AfterHandleRequestEvent($this->request, $response),
+            KernelCustomEvents::AFTER_HANDLE_REQUEST
+        );
+
         // Инициирует событие kernel.terminate.
         try {
             $framework->terminate($this->request, $response);
