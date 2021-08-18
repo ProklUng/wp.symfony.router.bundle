@@ -206,7 +206,7 @@ class InitRouter
         }
 
         // Для внутренних нужд пометить роут Symfony
-        $this->request->headers->add(['X-Symfony-route', 1]);
+        $this->request->headers->set('X-Symfony-route', 1);
 
         // Send the response to the browser and exit app.
         $response->send();
