@@ -201,7 +201,7 @@ class InitRouter
 
         // Handle if no route match found
         if ($response->getStatusCode() === 404) {
-            // If no route found do noting and let wp continue.
+            // If no route found do nothing and let wp continue.
             return;
         }
 
